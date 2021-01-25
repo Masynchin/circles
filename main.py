@@ -1,20 +1,28 @@
 import random
 import sys
 
-from PyQt5 import uic  # Импортируем uic
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen, QColor
 
 
-class MyWidget(QMainWindow):
+class BaseWindow(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi("UI.ui", self)
-        self.pushButton.clicked.connect(self.run)
+        main_layout = QVBoxLayout(self)
+
+        self.button = QPushButton("Случайная окружность", self)
+        main_layout.addWidget(self.button)
+        main_layout.setAlignment(Qt.AlignBottom)
+
+
+class MyWidget(BaseWindow):
+    def __init__(self):
+        super().__init__()
+        self.button.clicked.connect(self.clicked)
         self.do_paint = False
 
-    def run(self):
+    def clicked(self):
         self.do_paint = True
         self.repaint()
 
@@ -26,11 +34,11 @@ class MyWidget(QMainWindow):
             painter.end()
 
     def draw_circle(self, painter):
-        painter.setPen(QPen(self.get_random_color(),  8))
+        painter.setPen(QPen(self.get_random_color(), 8))
         painter.drawEllipse(*self.get_random_pos())
 
     def get_random_color(self):
-        return QColor(255, 204, 0)
+        return QColor(*[random.randint(0, 255) for _ in range(3)])
 
     def get_random_pos(self):
         s = random.randint(50, 100)
